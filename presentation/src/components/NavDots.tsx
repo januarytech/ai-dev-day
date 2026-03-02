@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 
 const labels: Record<string, string> = {
   hero: "Start",
-  problem: "Problem",
+  "story-one": "Story 1",
   tdd: "TDD",
+  "story-two": "Story 2",
   pict: "PICT",
   "pict-demo": "Demo",
   workflow: "Workflow",
-  review: "Review",
   "before-after": "Compare",
   results: "Results",
   cta: "Act",

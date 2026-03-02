@@ -1,10 +1,10 @@
 import { Hero } from "./sections/Hero";
-import { TheProblem } from "./sections/TheProblem";
+import { StoryOne } from "./sections/StoryOne";
 import { WhatIsTDD } from "./sections/WhatIsTDD";
+import { StoryTwo } from "./sections/StoryTwo";
 import { WhatIsPICT } from "./sections/WhatIsPICT";
 import { PICTDemo } from "./sections/PICTDemo";
 import { TheWorkflow } from "./sections/TheWorkflow";
-import { AdversarialReview } from "./sections/AdversarialReview";
 import { BeforeAfter } from "./sections/BeforeAfter";
 import { RealResults } from "./sections/RealResults";
 import { CallToAction } from "./sections/CallToAction";
@@ -12,12 +12,12 @@ import { NavDots } from "./components/NavDots";
 
 const sections = [
   "hero",
-  "problem",
+  "story-one",
   "tdd",
+  "story-two",
   "pict",
   "pict-demo",
   "workflow",
-  "review",
   "before-after",
   "results",
   "cta",
@@ -28,12 +28,12 @@ function App() {
     <div className="relative">
       <NavDots sections={sections} />
       <Hero />
-      <TheProblem />
+      <StoryOne />
       <WhatIsTDD />
+      <StoryTwo />
       <WhatIsPICT />
       <PICTDemo />
       <TheWorkflow />
-      <AdversarialReview />
       <BeforeAfter />
       <RealResults />
       <CallToAction />
