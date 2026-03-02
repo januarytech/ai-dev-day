@@ -20,8 +20,26 @@ const steps = [
           </p>
         </div>
         <p className="text-slate-400">
-          The AI generates 40 lines of clean, well-structured Python. Handles
-          percentages, flat amounts, stacking order. Looks great.
+          Simple enough. The AI gets to work.
+        </p>
+      </>
+    ),
+  },
+  {
+    label: "The code",
+    content: (
+      <>
+        <div className="code-block mb-4">
+          <pre className="text-slate-300 text-sm whitespace-pre-wrap">{`def calc(price: float, pct: float = 0, flat: float = 0) -> float:
+    """Apply percentage and/or flat discount to a price."""
+    discounted = price * (1 - pct / 100)
+    discounted -= flat
+    return round(discounted, 2)`}</pre>
+        </div>
+        <p className="text-slate-400">
+          Clean, readable, well-structured. Handles percentages, flat amounts,
+          stacking order. The developer reads it, nods.{" "}
+          <span className="text-white font-medium">Looks correct.</span>
         </p>
       </>
     ),
@@ -139,9 +157,9 @@ export function StoryOne() {
               onClick={() => setStep(i)}
               className={`px-4 py-2 rounded-lg text-sm font-mono transition-all cursor-pointer ${
                 step === i
-                  ? i === 2
+                  ? i === 3
                     ? "bg-red-500/15 text-red-300 border border-red-500/30"
-                    : i === 3
+                    : i === 4
                       ? "bg-teal-500/15 text-teal-300 border border-teal-500/30"
                       : "bg-slate-700/40 text-white border border-slate-600/30"
                   : "bg-slate-800/30 text-slate-500 border border-slate-700/20 hover:text-slate-300"
@@ -172,7 +190,7 @@ export function StoryOne() {
             onClick={() => setStep(step + 1)}
             className="mt-6 px-5 py-2.5 rounded-lg text-sm font-mono text-slate-400 border border-slate-700/30 hover:text-white hover:border-slate-500/50 transition-all cursor-pointer"
           >
-            {step === 1 ? "What happened next →" : "Continue →"}
+            {step === 2 ? "What happened next →" : "Continue →"}
           </button>
         )}
       </FadeIn>
