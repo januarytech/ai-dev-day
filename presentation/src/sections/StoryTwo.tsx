@@ -175,21 +175,35 @@ def test_express():
     content: (
       <>
         <div className="rounded-xl border border-red-500/30 bg-red-500/[0.06] p-6 mb-6">
-          <p className="text-red-400 font-mono text-sm mb-2">
-            BUG — Found by a customer
+          <p className="text-red-400 font-mono text-sm mb-3">
+            BUG — Found by a customer: rate(weight="heavy", dest="intl", speed="express")
           </p>
-          <div className="code-block mt-3">
-            <pre className="text-slate-300 text-sm whitespace-pre-wrap">{`rate(weight="heavy", dest="intl", speed="express")
->>> 5.99   # Should be 45.99
-           # Returns the base domestic rate instead`}</pre>
+          <div className="code-block text-sm">
+            <pre className="text-slate-300 whitespace-pre-wrap">{`def rate(weight, dest, speed):
+    total = 5.99                   `}<span className="text-slate-500">{"# total = 5.99"}</span>{`
+    if weight == "heavy":
+        total += 7.00              `}<span className="text-slate-500">{"# total = 12.99"}</span>{`
+    if dest == "intl":
+        total += 10.00             `}<span className="text-slate-500">{"# total = 22.99"}</span>{`
+    `}<span className="text-red-400 font-bold">{"elif"}</span>{` speed == "express":      `}<span className="text-red-400">{"# ← SKIPPED! elif means"}</span>{`
+        total += 4.00              `}<span className="text-red-400">{"#   this never runs when"}</span>{`
+                                   `}<span className="text-red-400">{"#   dest == \"intl\""}</span>{`
+    return total                   `}<span className="text-slate-500">{"# returns 22.99"}</span>{`
+                                   `}<span className="text-red-400">{"# should be  26.99"}</span></pre>
           </div>
         </div>
-        <p className="text-slate-300 text-lg leading-relaxed mb-4">
-          The bug lived in the{" "}
-          <span className="text-red-400 font-semibold">interaction</span>{" "}
-          between two inputs — not in any single value. The code applied the
-          international surcharge OR the express surcharge, but not both. A
-          classic interaction fault.
+        <p className="text-slate-300 leading-relaxed mb-4">
+          The <span className="text-white font-mono text-sm">elif</span> means
+          the express surcharge is{" "}
+          <span className="text-red-400 font-semibold">
+            mutually exclusive
+          </span>{" "}
+          with the international surcharge. International shipments{" "}
+          <span className="text-white">never</span> get charged for express.
+          No single-value test catches this — it only appears when{" "}
+          <span className="text-white font-mono text-sm">intl</span> and{" "}
+          <span className="text-white font-mono text-sm">express</span>{" "}
+          are tested <span className="text-white">together</span>.
         </p>
         <div className="p-5 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.04]">
           <p className="text-slate-300">
@@ -197,7 +211,7 @@ def test_express():
               This is exactly what pairwise testing catches.
             </span>{" "}
             PICT guarantees every pair of values appears together in at least
-            one test — so the{" "}
+            one test — the{" "}
             <span className="text-white font-mono text-sm">
               (intl, express)
             </span>{" "}
