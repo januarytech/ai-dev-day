@@ -6,12 +6,12 @@ const steps = [
   {
     num: "1",
     title: "Encode the workflow as skills",
-    desc: "Create Claude Code skills for PICT design, test planning, test writing, and adversarial review. The AI follows the process every time.",
+    desc: "Create Claude Code skills for PICT design, test planning, and test writing. The AI follows the process every time.",
   },
   {
     num: "2",
     title: "Never implement first",
-    desc: "Stubs → Tests → RED → Review → Implement → GREEN. If implementation comes before tests, the process is broken.",
+    desc: "Stubs → Tests → RED → Implement → GREEN. If implementation comes before tests, the process is broken.",
   },
   {
     num: "3",
@@ -91,7 +91,7 @@ export function CallToAction() {
               </div>
               <span className="text-slate-600">→</span>
               <div className="text-slate-500 font-mono">
-                <span className="text-teal-400">$</span> claude /review
+                <span className="text-teal-400">$</span> claude /implement
               </div>
               <span className="text-slate-600">→</span>
               <div className="text-teal-400 font-mono font-bold">ship</div>

@@ -25,60 +25,94 @@ const presets: Record<string, Param[]> = {
   ],
 };
 
+// IPO (In-Parameter-Order) algorithm for deterministic, near-optimal pairwise generation
 function generatePairwise(params: Param[]): string[][] {
   if (params.length < 2) return [];
 
-  const pairs: Array<{ p1: number; v1: number; p2: number; v2: number }> = [];
-  for (let i = 0; i < params.length; i++) {
-    for (let j = i + 1; j < params.length; j++) {
-      for (let vi = 0; vi < params[i].values.length; vi++) {
-        for (let vj = 0; vj < params[j].values.length; vj++) {
-          pairs.push({ p1: i, v1: vi, p2: j, v2: vj });
-        }
-      }
+  // Start with all combinations of the first two parameters
+  const tests: number[][] = [];
+  for (let v0 = 0; v0 < params[0].values.length; v0++) {
+    for (let v1 = 0; v1 < params[1].values.length; v1++) {
+      const row = new Array(params.length).fill(-1);
+      row[0] = v0;
+      row[1] = v1;
+      tests.push(row);
     }
   }
 
-  const tests: number[][] = [];
-  const covered = new Set<number>();
-
-  while (covered.size < pairs.length) {
-    let bestRow: number[] = [];
-    let bestCover = 0;
-
-    for (let attempt = 0; attempt < 100; attempt++) {
-      const candidate = params.map(
-        (p) => Math.floor(Math.random() * p.values.length)
-      );
-      let coverCount = 0;
-      for (let pi = 0; pi < pairs.length; pi++) {
-        if (covered.has(pi)) continue;
-        const pair = pairs[pi];
-        if (
-          candidate[pair.p1] === pair.v1 &&
-          candidate[pair.p2] === pair.v2
-        ) {
-          coverCount++;
+  // For each subsequent parameter, extend existing rows then add new ones
+  for (let pi = 2; pi < params.length; pi++) {
+    // Track which pairs (pi, earlier_param) still need coverage
+    const uncovered = new Set<string>();
+    for (let pj = 0; pj < pi; pj++) {
+      for (let vi = 0; vi < params[pi].values.length; vi++) {
+        for (let vj = 0; vj < params[pj].values.length; vj++) {
+          uncovered.add(`${pi}:${vi},${pj}:${vj}`);
         }
       }
-      if (coverCount > bestCover) {
-        bestCover = coverCount;
-        bestRow = candidate;
+    }
+
+    // Horizontal extension: assign values to existing rows
+    for (const row of tests) {
+      let bestVal = 0;
+      let bestCount = 0;
+      for (let vi = 0; vi < params[pi].values.length; vi++) {
+        let count = 0;
+        for (let pj = 0; pj < pi; pj++) {
+          if (uncovered.has(`${pi}:${vi},${pj}:${row[pj]}`)) count++;
+        }
+        if (count > bestCount) {
+          bestCount = count;
+          bestVal = vi;
+        }
+      }
+      row[pi] = bestVal;
+      for (let pj = 0; pj < pi; pj++) {
+        uncovered.delete(`${pi}:${bestVal},${pj}:${row[pj]}`);
       }
     }
 
-    for (let pi = 0; pi < pairs.length; pi++) {
-      const pair = pairs[pi];
-      if (
-        bestRow[pair.p1] === pair.v1 &&
-        bestRow[pair.p2] === pair.v2
-      ) {
-        covered.add(pi);
+    // Vertical extension: add new rows for any still-uncovered pairs
+    while (uncovered.size > 0) {
+      const row = new Array(params.length).fill(-1);
+      // Pick the first uncovered pair to seed the row
+      const first = uncovered.values().next().value!;
+      const parts = first.split(",");
+      for (const part of parts) {
+        const [p, v] = part.split(":").map(Number);
+        row[p] = v;
       }
+      // Fill remaining positions greedily
+      for (let pk = 0; pk < params.length; pk++) {
+        if (row[pk] !== -1) continue;
+        let bestVal = 0;
+        let bestCount = 0;
+        for (let vi = 0; vi < params[pk].values.length; vi++) {
+          let count = 0;
+          for (let pj = 0; pj < params.length; pj++) {
+            if (pj === pk || row[pj] === -1) continue;
+            const key1 = `${pk}:${vi},${pj}:${row[pj]}`;
+            const key2 = `${pj}:${row[pj]},${pk}:${vi}`;
+            if (uncovered.has(key1)) count++;
+            if (uncovered.has(key2)) count++;
+          }
+          if (count > bestCount) {
+            bestCount = count;
+            bestVal = vi;
+          }
+        }
+        row[pk] = bestVal;
+      }
+      // Mark covered pairs
+      for (let i = 0; i < params.length; i++) {
+        for (let j = i + 1; j < params.length; j++) {
+          uncovered.delete(`${i}:${row[i]},${j}:${row[j]}`);
+          uncovered.delete(`${j}:${row[j]},${i}:${row[i]}`);
+        }
+      }
+      tests.push(row);
+      if (tests.length > 100) break;
     }
-
-    tests.push(bestRow);
-    if (tests.length > 50) break;
   }
 
   return tests.map((row) =>

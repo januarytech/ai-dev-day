@@ -88,9 +88,8 @@ export function BeforeAfter() {
                   <p className="text-slate-400">1. Define stubs</p>
                   <p className="text-slate-400">2. PICT → pairwise test cases</p>
                   <p className="text-slate-400">3. Write tests, verify RED</p>
-                  <p className="text-slate-400">4. Adversarial review</p>
-                  <p className="text-slate-400">5. AI implements to pass tests</p>
-                  <p className="text-teal-400">6. All GREEN. Ship with proof.</p>
+                  <p className="text-slate-400">4. AI implements to pass tests</p>
+                  <p className="text-teal-400">5. All GREEN. Ship with proof.</p>
                 </div>
               </div>
 

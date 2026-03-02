@@ -35,16 +35,6 @@ const phases = [
   },
   {
     number: "04",
-    title: "Adversarial Review",
-    description:
-      "Fresh-eyes review against a 13-point checklist: convention violations, PICT gaps, vacuous assertions, missing error specificity.",
-    who: "AI (separate context)",
-    color: "text-amber-400",
-    border: "border-amber-500/20",
-    icon: "🔍",
-  },
-  {
-    number: "05",
     title: "Implement",
     description:
       "NOW write the code. AI generates the implementation with tests as the specification. The tests constrain the solution space.",
@@ -54,7 +44,7 @@ const phases = [
     icon: "⚙️",
   },
   {
-    number: "06",
+    number: "05",
     title: "Run Tests (GREEN)",
     description:
       "All tests pass. You have mathematical proof that every pairwise combination works correctly.",
@@ -73,7 +63,7 @@ export function TheWorkflow() {
           The System
         </span>
         <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-4 text-white">
-          6-Phase TDD + PICT Workflow
+          5-Phase TDD + PICT Workflow
         </h2>
         <p className="text-slate-400 text-lg max-w-2xl mb-16">
           A rigorous, repeatable process that turns AI from a code generator
@@ -124,7 +114,7 @@ export function TheWorkflow() {
         <div className="mt-12 p-6 rounded-xl border border-teal-500/20 bg-teal-500/[0.04] text-center">
           <p className="text-slate-300">
             <span className="text-teal-400 font-semibold">Notice:</span>{" "}
-            Implementation is step 5 of 6 — not step 1. The AI writes code
+            Implementation is step 4 of 5 — not step 1. The AI writes code
             to satisfy a verified specification, not to guess at requirements.
           </p>
         </div>
