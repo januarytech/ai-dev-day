@@ -24,6 +24,60 @@ const presets: Record<string, Param[]> = {
   ],
 };
 
+function parseValues(raw: string): string[] {
+  return raw.split(",").map((v) => v.trim()).filter(Boolean);
+}
+
+function ParamRow({
+  param,
+  index,
+  canRemove,
+  onChangeName,
+  onChangeValues,
+  onRemove,
+}: {
+  param: Param;
+  index: number;
+  canRemove: boolean;
+  onChangeName: (idx: number, name: string) => void;
+  onChangeValues: (idx: number, values: string[]) => void;
+  onRemove: (idx: number) => void;
+}) {
+  const [rawValues, setRawValues] = useState(param.values.join(", "));
+
+  return (
+    <div className="flex gap-2 items-center">
+      <input
+        type="text"
+        value={param.name}
+        onChange={(e) => onChangeName(index, e.target.value)}
+        placeholder="Parameter"
+        className="w-36 px-3 py-2 rounded-lg bg-slate-800/60 border border-slate-700/40 text-cyan-300 font-mono text-sm placeholder:text-slate-600 focus:outline-none focus:border-teal-500/50"
+      />
+      <span className="text-slate-600">:</span>
+      <input
+        type="text"
+        value={rawValues}
+        onChange={(e) => {
+          setRawValues(e.target.value);
+          onChangeValues(index, parseValues(e.target.value));
+        }}
+        onBlur={() => setRawValues(param.values.join(", "))}
+        placeholder="Value1, Value2, Value3"
+        className="flex-1 px-3 py-2 rounded-lg bg-slate-800/60 border border-slate-700/40 text-slate-300 font-mono text-sm placeholder:text-slate-600 focus:outline-none focus:border-teal-500/50"
+      />
+      {canRemove && (
+        <button
+          onClick={() => onRemove(index)}
+          className="w-8 h-8 rounded-lg border border-slate-700/30 text-slate-600 hover:text-red-400 hover:border-red-500/30 transition-colors text-sm cursor-pointer flex items-center justify-center"
+        >
+          ×
+        </button>
+      )}
+    </div>
+  );
+}
+
 function ParamEditor({
   params,
   onChange,
@@ -40,11 +94,7 @@ function ParamEditor({
   );
 
   const updateValues = useCallback(
-    (idx: number, raw: string) => {
-      const values = raw
-        .split(",")
-        .map((v) => v.trim())
-        .filter(Boolean);
+    (idx: number, values: string[]) => {
       const next = params.map((p, i) =>
         i === idx ? { ...p, values } : p
       );
@@ -67,31 +117,15 @@ function ParamEditor({
   return (
     <div className="space-y-3">
       {params.map((p, i) => (
-        <div key={i} className="flex gap-2 items-center">
-          <input
-            type="text"
-            value={p.name}
-            onChange={(e) => updateParamName(i, e.target.value)}
-            placeholder="Parameter"
-            className="w-36 px-3 py-2 rounded-lg bg-slate-800/60 border border-slate-700/40 text-cyan-300 font-mono text-sm placeholder:text-slate-600 focus:outline-none focus:border-teal-500/50"
-          />
-          <span className="text-slate-600">:</span>
-          <input
-            type="text"
-            value={p.values.join(", ")}
-            onChange={(e) => updateValues(i, e.target.value)}
-            placeholder="Value1, Value2, Value3"
-            className="flex-1 px-3 py-2 rounded-lg bg-slate-800/60 border border-slate-700/40 text-slate-300 font-mono text-sm placeholder:text-slate-600 focus:outline-none focus:border-teal-500/50"
-          />
-          {params.length > 2 && (
-            <button
-              onClick={() => removeParam(i)}
-              className="w-8 h-8 rounded-lg border border-slate-700/30 text-slate-600 hover:text-red-400 hover:border-red-500/30 transition-colors text-sm cursor-pointer flex items-center justify-center"
-            >
-              ×
-            </button>
-          )}
-        </div>
+        <ParamRow
+          key={i}
+          param={p}
+          index={i}
+          canRemove={params.length > 2}
+          onChangeName={updateParamName}
+          onChangeValues={updateValues}
+          onRemove={removeParam}
+        />
       ))}
       <button
         onClick={addParam}
