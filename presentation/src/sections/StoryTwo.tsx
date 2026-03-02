@@ -3,14 +3,6 @@ import { FadeIn } from "../components/FadeIn";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type Cell = { value: string; tested: boolean; bug?: boolean };
-
-const grid: Cell[][] = [
-  // weight  ×  destination  ×  speed
-  // The grid shows which combinations were tested
-  // Bug: international + express + heavy returns wrong rate
-];
-
 const steps = [
   {
     label: "The approach",
@@ -42,8 +34,39 @@ const steps = [
           </div>
         </div>
         <p className="text-slate-400">
-          They write tests this time — one for each value, making sure every
-          input is covered.
+          The AI writes the code. The developer writes tests for each value.
+        </p>
+      </>
+    ),
+  },
+  {
+    label: "The code",
+    content: (
+      <>
+        <div className="code-block mb-4">
+          <pre className="text-slate-300 text-sm whitespace-pre-wrap">{`BASE_RATE = 5.99
+WEIGHT_SURCHARGE = 7.00
+INTL_SURCHARGE = 10.00
+EXPRESS_SURCHARGE = 4.00
+
+def rate(weight: str, dest: str, speed: str) -> float:
+    total = BASE_RATE
+    if weight == "heavy":
+        total += WEIGHT_SURCHARGE
+    if dest == "intl":
+        total += INTL_SURCHARGE
+    elif speed == "express":   # Bug: elif instead of if
+        total += EXPRESS_SURCHARGE
+    return round(total, 2)`}</pre>
+        </div>
+        <p className="text-slate-400">
+          Looks reasonable. The AI used{" "}
+          <span className="text-white font-mono text-sm">elif</span> for the
+          speed check — which means{" "}
+          <span className="text-slate-300">
+            international shipments never get the express surcharge
+          </span>
+          . But that's hard to spot in a code review.
         </p>
       </>
     ),
@@ -213,9 +236,9 @@ export function StoryTwo() {
               onClick={() => setStep(i)}
               className={`px-4 py-2 rounded-lg text-sm font-mono transition-all cursor-pointer ${
                 step === i
-                  ? i === 3
+                  ? i === 4
                     ? "bg-red-500/15 text-red-300 border border-red-500/30"
-                    : i === 2
+                    : i === 3
                       ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
                       : "bg-slate-700/40 text-white border border-slate-600/30"
                   : "bg-slate-800/30 text-slate-500 border border-slate-700/20 hover:text-slate-300"
@@ -246,7 +269,7 @@ export function StoryTwo() {
             onClick={() => setStep(step + 1)}
             className="mt-6 px-5 py-2.5 rounded-lg text-sm font-mono text-slate-400 border border-slate-700/30 hover:text-white hover:border-slate-500/50 transition-all cursor-pointer"
           >
-            {step === 1 ? "So what's missing? →" : "Continue →"}
+            {step === 2 ? "So what's missing? →" : "Continue →"}
           </button>
         )}
       </FadeIn>
