@@ -1,5 +1,9 @@
 export type Param = { name: string; values: string[] };
 
+export function parseValues(raw: string): string[] {
+  return raw.split(",").map((v) => v.trim()).filter(Boolean);
+}
+
 // IPO (In-Parameter-Order) algorithm for deterministic, near-optimal pairwise generation
 export function generatePairwise(params: Param[]): string[][] {
   if (params.length < 2) return [];

@@ -2,7 +2,7 @@ import { SectionShell } from "../components/SectionShell";
 import { FadeIn } from "../components/FadeIn";
 import { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { generatePairwise, type Param } from "../pairwise";
+import { generatePairwise, parseValues, type Param } from "../pairwise";
 
 const presets: Record<string, Param[]> = {
   "Login System": [
@@ -23,10 +23,6 @@ const presets: Record<string, Param[]> = {
     { name: "Payload", values: ["Empty", "Small", "Large"] },
   ],
 };
-
-function parseValues(raw: string): string[] {
-  return raw.split(",").map((v) => v.trim()).filter(Boolean);
-}
 
 function ParamRow({
   param,
@@ -141,9 +137,10 @@ export function PICTDemo() {
   const [mode, setMode] = useState<"preset" | "custom">("preset");
   const [selected, setSelected] = useState("Login System");
   const [customParams, setCustomParams] = useState<Param[]>([
-    { name: "Browser", values: ["Chrome", "Firefox", "Safari"] },
-    { name: "OS", values: ["Windows", "Mac", "Linux"] },
-    { name: "Auth", values: ["OAuth", "Password", "SSO"] },
+    { name: "State", values: ["NY", "CT", "NJ", "TX"] },
+    { name: "Balance", values: ["100", "200", "400", "800"] },
+    { name: "DNC", values: ["TRUE", "FALSE", "None"] },
+    { name: "madePayment", values: ["TRUE", "FALSE"] },
   ]);
 
   const activeParams =

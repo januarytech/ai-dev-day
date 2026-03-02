@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generatePairwise, verifyPairwiseCoverage, type Param } from "./pairwise";
+import { generatePairwise, verifyPairwiseCoverage, parseValues, type Param } from "./pairwise";
 
 function assertPairwise(params: Param[], maxTests: number) {
   const tests = generatePairwise(params);
@@ -72,5 +72,28 @@ describe("generatePairwise", () => {
     expect(
       generatePairwise([{ name: "A", values: ["a1", "a2"] }])
     ).toEqual([]);
+  });
+});
+
+describe("parseValues", () => {
+  it("parses comma-separated values", () => {
+    expect(parseValues("Chrome, Firefox, Safari")).toEqual(["Chrome", "Firefox", "Safari"]);
+  });
+
+  it("trims whitespace around values", () => {
+    expect(parseValues("  NY , CT ,NJ")).toEqual(["NY", "CT", "NJ"]);
+  });
+
+  it("preserves existing values when trailing comma is typed", () => {
+    // Regression: typing a comma to add a new value must not destroy existing values
+    expect(parseValues("Chrome,")).toEqual(["Chrome"]);
+    expect(parseValues("Chrome, Firefox,")).toEqual(["Chrome", "Firefox"]);
+    expect(parseValues("Chrome, Firefox, ")).toEqual(["Chrome", "Firefox"]);
+  });
+
+  it("handles empty input", () => {
+    expect(parseValues("")).toEqual([]);
+    expect(parseValues("  ")).toEqual([]);
+    expect(parseValues(",,,")).toEqual([]);
   });
 });
