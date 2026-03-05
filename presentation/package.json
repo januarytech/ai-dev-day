@@ -1,13 +1,17 @@
 {
   "name": "presentation",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "bin": {
+    "pairwise": "./dist/cli.js"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "version": "node -e \"const p=require('./package.json');console.log(p.version)\""
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",
